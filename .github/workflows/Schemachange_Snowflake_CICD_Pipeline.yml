@@ -47,9 +47,9 @@ jobs:
       - name: Install schemachange
         run: |
           pip install snowflake-connector-python
-          pip install schemachange==3.7.0
+          pip install schemachange --upgrade
 
       # Run schemachange
       - name: Run schemachange
         run: |
-          schemachange deploy -f $GITHUB_WORKSPACE/Migrations 
+          schemachange -f $GITHUB_WORKSPACE/Migrations --connections-file-path $GITHUB_WORKSPACE/connections.toml --connection-name testconnection
