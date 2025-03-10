@@ -1,4 +1,4 @@
-name: CI
+name: SNOWFLAKE_CICD
 
 # Controls when the workflow will run
 on:
@@ -7,7 +7,7 @@ on:
     branches:
       - master
     paths:
-      - '**'
+      - 'Migrations/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
