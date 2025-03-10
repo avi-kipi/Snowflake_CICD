@@ -25,6 +25,14 @@ jobs:
         run: |
           pip install --upgrade snowflake-connector-python schemachange
 
+      - name: Decode private key
+        run: |
+          echo "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" | base64 -d > decoded_private_key.pem
+
+      - name: Decode private key passphrase
+        run: |
+          echo "${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}" | base64 -d > decoded_private_key_passphrase.txt
+
       - name: Create connections.toml
         run: |
           cat <<EOF > connections.toml
@@ -35,8 +43,8 @@ jobs:
           warehouse = "${{ secrets.SNOWFLAKE_WAREHOUSE }}"
           database = "${{ secrets.SNOWFLAKE_DATABASE }}"
           schema = "${{ secrets.SNOWFLAKE_SCHEMA }}"
-          private_key = "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}"
-          private_key_passphrase = "${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}"
+          private_key = "$(cat decoded_private_key.pem)"
+          private_key_passphrase = "$(cat decoded_private_key_passphrase.txt)"
           EOF
 
       - name: Secure connections.toml permissions
