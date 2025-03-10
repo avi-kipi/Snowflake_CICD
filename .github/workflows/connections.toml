@@ -1,3 +1,4 @@
+[testconnection]
 SNOWFLAKE_ACCOUNT =  ${{ secrets.SNOWFLAKE_ACCOUNT }}
 SNOWFLAKE_USERNAME = ${{ secrets.SNOWFLAKE_USERNAME }}
 SNOWFLAKE_ROLE = ${{ secrets.SNOWFLAKE_ROLE }}
