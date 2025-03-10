@@ -46,6 +46,7 @@ jobs:
           private-key = "$(cat decoded_private_key.pem)"
           private_key_file_pwd = "$(cat decoded_private_key_passphrase.txt)"
           EOF
+          cat connections.toml
 
       - name: Secure connections.toml permissions
         run: chmod 600 connections.toml
