@@ -35,9 +35,12 @@ jobs:
           warehouse = "${{ secrets.SNOWFLAKE_WAREHOUSE }}"
           database = "${{ secrets.SNOWFLAKE_DATABASE }}"
           schema = "${{ secrets.SNOWFLAKE_SCHEMA }}"
-          private-key = "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}"
-          private_key_file_pwd = "${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}"
+          private_key = "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}"
+          private_key_passphrase = "${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}"
           EOF
+
+      - name: Secure connections.toml permissions
+        run: chmod 600 connections.toml
 
       - name: Run schemachange
         run: schemachange -f Migrations --connections-file-path connections.toml --connection-name testconnection
