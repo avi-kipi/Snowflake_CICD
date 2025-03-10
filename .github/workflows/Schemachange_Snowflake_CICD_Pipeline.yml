@@ -2,14 +2,12 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push events to the "master" branch from the "non_prod" branch
+  # Triggers the workflow on push events to the "master" branch
   push:
     branches:
       - master
     paths:
       - '**'
-    branches-ignore:
-      - non_prod
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -38,16 +36,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-
       # Set up Python
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
@@ -57,14 +45,10 @@ jobs:
       # Install schemachange
       - name: Install schemachange
         run: |
-          echo "Step 1: Installing schemachange"
           pip install snowflake-connector-python
           pip install schemachange==3.7.0
 
       # Run schemachange
       - name: Run schemachange
         run: |
-          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-          python --version
-          echo "Step 2: Running schemachange"
           schemachange -f $GITHUB_WORKSPACE/Migrations -a $SF_ACCOUNT -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table --vars '{"SF_RAW_DATABASE": "${{env.SF_RAW_DATABASE}}", "SF_TRANSFORMATION_DATABASE": "${{env.SF_TRANSFORMATION_DATABASE}}","SF_ANALYTICS_DATABASE": "${{env.SF_ANALYTICS_DATABASE}}"}' --private-key-path $PRIVATE_KEY --private-key-passphrase $PRIVATE_KEY_PASSPHRASE
