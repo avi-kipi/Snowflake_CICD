@@ -1,1 +1,1 @@
-
+create or replace table {SF_RAW_DATABASE}.DIMENSIONAL_SCHEMA.test(NAME VARCHAR);
