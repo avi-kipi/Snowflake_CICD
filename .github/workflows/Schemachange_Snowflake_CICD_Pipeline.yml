@@ -31,7 +31,7 @@ jobs:
 
       - name: Decode private key passphrase
         run: |
-          echo "${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}" | base64 -d > decoded_private_key_passphrase.txt
+          echo "${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}"  > decoded_private_key_passphrase.txt
 
       - name: Create connections.toml
         run: |
