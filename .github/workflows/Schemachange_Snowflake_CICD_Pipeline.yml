@@ -1,55 +1,43 @@
 name: SNOWFLAKE_CICD
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push events to the "master" branch
   push:
     branches:
       - master
     paths:
       - 'Migrations/**'
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  deploy:
     runs-on: ubuntu-latest
 
-    env:
-      SF_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-      SF_USER: ${{ secrets.SNOWFLAKE_USER }}
-      SF_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-      SF_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-      SF_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-      SF_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
-      SF_TRANSFORMATION_DATABASE: ${{ secrets.SNOWFLAKE_PROD_TRANSFORMATION_SCHEMA }}
-      SF_RAW_DATABASE: ${{ secrets.SNOWFLAKE_PROD_RAW_SCHEMA }}
-      SF_ANALYTICS_DATABASE: ${{ secrets.SNOWFLAKE_PROD_ANALYTICS_SCHEMA }}
-      SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
-      SNOWFLAKE_PRIVATE_KEY_PASSPHRASE: ${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # Set up Python
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
 
-      # Install schemachange
-      - name: Install schemachange
+      - name: Install schemachange and snowflake connector
         run: |
-          pip install snowflake-connector-python
-          pip install schemachange --upgrade
+          pip install --upgrade snowflake-connector-python schemachange
 
-      # Run schemachange
-      - name: Run schemachange
+      - name: Create connections.toml
         run: |
-          schemachange -f $GITHUB_WORKSPACE/Migrations --connections-file-path $GITHUB_WORKSPACE/connections.toml --connection-name testconnection
+          cat <<EOF > connections.toml
+          [connections.testconnection]
+          account = "${{ secrets.SNOWFLAKE_ACCOUNT }}"
+          user = "${{ secrets.SNOWFLAKE_USER }}"
+          role = "${{ secrets.SNOWFLAKE_ROLE }}"
+          warehouse = "${{ secrets.SNOWFLAKE_WAREHOUSE }}"
+          database = "${{ secrets.SNOWFLAKE_DATABASE }}"
+          schema = "${{ secrets.SNOWFLAKE_SCHEMA }}"
+          private-key = "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}"
+          private_key_file_pwd = "${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}"
+          EOF
+
+      - name: Run schemachange
+        run: schemachange -f Migrations --connections-file-path connections.toml --connection-name testconnection
