@@ -36,7 +36,7 @@ jobs:
       - name: Create connections.toml
         run: |
           cat <<EOF > connections.toml
-          [connections.testconnection]
+          [testconnection]
           account = "${{ secrets.SNOWFLAKE_ACCOUNT }}"
           user = "${{ secrets.SNOWFLAKE_USER }}"
           role = "${{ secrets.SNOWFLAKE_ROLE }}"
