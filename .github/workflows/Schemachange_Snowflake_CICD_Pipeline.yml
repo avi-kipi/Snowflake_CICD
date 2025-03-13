@@ -52,4 +52,4 @@ jobs:
         run: chmod 600 connections.toml
 
       - name: Run schemachange
-        run: schemachange \ -f Migrations --connections-file-path connections.toml --connection-name snowflake
+        run: schemachange  -f Migrations --connections-file-path connections.toml --connection-name snowflake
